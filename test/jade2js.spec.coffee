@@ -157,3 +157,19 @@ describe 'preprocessor jade2js', ->
           .to.haveContent(HTML1).and
           .to.defineTemplateId('tpl/two.html').and
           .to.haveContent(HTML2)
+
+    describe 'jadeRenderConfig', ->
+      beforeEach ->
+        process = createPreprocessor
+          jadeRenderConfig:
+            key: (str) -> str
+
+      it 'should strip references identified by a specific key', (done) ->
+        file = new File '/base/path/file.jade'
+
+        process 'div #{key("Test")}', file, (processedContent) ->
+          expect(processedContent)
+            .to.defineModule('path/file.html').and
+            .to.defineTemplateId('path/file.html').and
+            .to.haveContent '<div>Test</div>'
+          done()
